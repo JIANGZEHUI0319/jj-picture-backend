@@ -1,0 +1,88 @@
+server:
+  port: 8101
+  servlet:
+    context-path: /api
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+spring:
+  # 空间图片分表
+  shardingsphere:
+    datasource:
+      names: jj_picture
+      jj_picture:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/jj_picture
+        username: root
+        password: jzh1456324014
+    rules:
+      sharding:
+        tables:
+          picture:
+            actual-data-nodes: jj_picture.picture # 动态分表
+            table-strategy:
+              standard:
+                sharding-column: spaceId
+                sharding-algorithm-name: picture_sharding_algorithm  # 使用自定义分片算法
+        sharding-algorithms:
+          picture_sharding_algorithm:
+            type: CLASS_BASED
+            props:
+              strategy: standard
+              algorithmClassName: com.ncepu.jjpicturebackend.manager.sharding.PictureShardingAlgorithm
+    props:
+      sql-show: true
+
+  application:
+    name: jj-picture-backend
+    # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/jj_picture
+    username: root
+    password: jzh1456324014
+  # Redis 配置
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    timeout: 5000
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  # session 配置
+  session:
+    store-type: redis
+    timeout: 259200
+
+mybatis-plus:
+  configuration:
+    # MyBatis 配置
+    map-underscore-to-camel-case: false
+    # 仅在开发环境下打印日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    enable-sql-runner: true
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除字段名
+      logic-delete-value: 1 # 逻辑已删除值
+      logic-not-delete-value: 0 # 逻辑未删除值
+
+# 接口文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: 智能图片助手接口文档
+    version: 1.0
+    group:
+      default:
+        group-name: 默认分组
+        api-rule: package
+        api-rule-resources:
+          - com.ncepu.jjpicturebackend.controller
+
+
+
+
