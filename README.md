@@ -1,0 +1,1 @@
+需要在application-local.yml中配置COS对象存储的APIKey和阿里云百炼大模型APIKey
